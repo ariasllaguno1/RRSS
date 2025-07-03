@@ -11,6 +11,7 @@ from pathlib import Path
 import time
 from concurrent.futures import ProcessPoolExecutor
 import numpy as np
+import re
 
 # Cargar variables de entorno desde archivo .env si existe
 try:
@@ -202,6 +203,43 @@ class SentimentAnalyzer:
         
         return PROMPT_TEMPLATE.format(**data)
     
+    def parse_llm_response(self, response: str) -> Dict[str, Optional[str]]:
+        """
+        Parsea la respuesta del LLM para extraer sentimiento y emoción.
+        Formato esperado: `[Descripción]: [valor], [emoción] [intensidad]`
+        Ej: `Positivo moderado: +7, joy 4`
+        """
+        if response.startswith("Error:"):
+            return {
+                "sentiment_desc": response,
+                "sentiment_score": None,
+                "emotion": None,
+                "emotion_intensity": None
+            }
+
+        # Patrón regex más flexible
+        pattern = re.compile(
+            r"^(.*?):\s*([+-]?\d+),\s*(\w+)\s+(\d+)$",
+            re.IGNORECASE
+        )
+        match = pattern.match(response.strip())
+
+        if match:
+            return {
+                "sentiment_desc": match.group(1).strip(),
+                "sentiment_score": match.group(2),
+                "emotion": match.group(3).lower(),
+                "emotion_intensity": match.group(4)
+            }
+        else:
+            logger.warning(f"No se pudo parsear la respuesta: '{response}'")
+            return {
+                "sentiment_desc": response, # Guardar la respuesta original si no se puede parsear
+                "sentiment_score": None,
+                "emotion": None,
+                "emotion_intensity": None
+            }
+    
     async def call_llm(self, model_name: str, model_id: str, prompt: str, row_index: int) -> Tuple[int, str, str]:
         """Llamar a un LLM específico"""
         async with self.semaphore:
@@ -270,7 +308,9 @@ class SentimentAnalyzer:
         # Organizar resultados
         row_results = {}
         for _, model_name, result in results:
-            row_results[f"result_{model_name}"] = result
+            parsed_result = self.parse_llm_response(result)
+            for key, value in parsed_result.items():
+                row_results[f"{model_name}_{key}"] = value
         
         return row_results
     
@@ -302,34 +342,42 @@ class SentimentAnalyzer:
             
             # Crear columnas para resultados si no existen
             for model_name in MODELS.keys():
-                col_name = f"result_{model_name}"
-                if col_name not in df.columns:
-                    df[col_name] = ""
+                for suffix in ["sentiment_desc", "sentiment_score", "emotion", "emotion_intensity"]:
+                    col_name = f"{model_name}_{suffix}"
+                    if col_name not in df.columns:
+                        # Usar 'object' para permitir strings y None
+                        df[col_name] = pd.Series(dtype='object')
             
             # Procesar en lotes
+            batch_tasks = []
             for batch_start in range(start_row, total_rows, BATCH_SIZE):
                 batch_end = min(batch_start + BATCH_SIZE, total_rows)
-                logger.info(f"Procesando lote: filas {batch_start} a {batch_end}")
-                
-                batch_results = await self.process_batch(df, batch_start, batch_end)
-                
-                # Actualizar dataframe con resultados
-                for idx, results in batch_results:
-                    for col_name, value in results.items():
-                        df.at[idx, col_name] = value
-                
-                # Guardar progreso
-                df.to_csv(OUTPUT_FILE, index=False)
-                logger.info(f"Progreso guardado en {OUTPUT_FILE}")
-                
-                # Pequeña pausa entre lotes para no saturar la API
-                if batch_end < total_rows:
-                    await asyncio.sleep(1)
+                logger.info(f"Preparando lote para procesar: filas {batch_start} a {batch_end}")
+                # En lugar de 'await' aquí, creamos una tarea
+                task = self.process_batch(df, batch_start, batch_end)
+                batch_tasks.append(task)
             
+            # Ejecutar todos los lotes en paralelo
+            logger.info(f"Ejecutando {len(batch_tasks)} lotes en paralelo...")
+            all_batches_results = await asyncio.gather(*batch_tasks)
+            
+            # Aplanar la lista de resultados de lotes
+            all_results = [item for batch in all_batches_results for item in batch]
+
+            # Actualizar dataframe con todos los resultados al final
+            logger.info("Actualizando el dataframe con todos los resultados...")
+            for idx, results in all_results:
+                for col_name, value in results.items():
+                    df.at[idx, col_name] = value
+
+            # Guardar el archivo CSV una sola vez al final de todo el procesamiento
+            logger.info(f"Guardando todos los resultados en {OUTPUT_FILE}")
+            df.to_csv(OUTPUT_FILE, index=False)
+                
             logger.info("Análisis completado!")
             
             # Limpiar checkpoint si se completó todo
-            if not TEST_MODE and os.path.exists(CHECKPOINT_FILE):
+            if total_rows == len(df) and not TEST_MODE and os.path.exists(CHECKPOINT_FILE):
                 os.remove(CHECKPOINT_FILE)
                 logger.info("Checkpoint eliminado")
             
@@ -368,11 +416,21 @@ def main():
     if TEST_MODE:
         logger.info("\n=== Muestra de resultados ===")
         for model_name in MODELS.keys():
-            col_name = f"result_{model_name}"
-            logger.info(f"\n{model_name}:")
-            for i in range(min(3, len(df_analyzed))):
-                if df_analyzed.at[i, col_name]:
-                    logger.info(f"  Fila {i}: {df_analyzed.at[i, col_name][:50]}...")
+            logger.info(f"\n--- Resultados para {model_name} ---")
+            for i in range(min(TEST_ROWS, len(df_analyzed))):
+                desc_col = f"{model_name}_sentiment_desc"
+                score_col = f"{model_name}_sentiment_score"
+                emo_col = f"{model_name}_emotion"
+                intensity_col = f"{model_name}_emotion_intensity"
+
+                if desc_col in df_analyzed.columns and pd.notna(df_analyzed.at[i, desc_col]):
+                    logger.info(f"  Fila {i}:")
+                    logger.info(f"    Descripción: {df_analyzed.at[i, desc_col]}")
+                    logger.info(f"    Puntuación:  {df_analyzed.at[i, score_col]}")
+                    logger.info(f"    Emoción:     {df_analyzed.at[i, emo_col]}")
+                    logger.info(f"    Intensidad:  {df_analyzed.at[i, intensity_col]}")
+                else:
+                    logger.info(f"  Fila {i}: Sin resultados.")
 
 
 if __name__ == "__main__":

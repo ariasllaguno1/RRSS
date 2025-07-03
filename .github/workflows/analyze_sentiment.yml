@@ -27,6 +27,12 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     timeout-minutes: 360  # 6 horas máximo
+    permissions:
+      contents: write # Necesario para hacer commit de los resultados
+    env:
+      # Variables disponibles para todos los pasos del job
+      TEST_MODE: ${{ github.event.inputs.test_mode || 'false' }}
+      TEST_ROWS: ${{ github.event.inputs.test_rows || '5' }}
     
     steps:
     - name: Checkout código
@@ -61,8 +67,6 @@ jobs:
     - name: Ejecutar análisis
       env:
         OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        TEST_MODE: ${{ github.event.inputs.test_mode || 'false' }}
-        TEST_ROWS: ${{ github.event.inputs.test_rows || '5' }}
         BATCH_SIZE: 20
         MAX_CONCURRENT_REQUESTS: 30
       run: |
