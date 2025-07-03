@@ -1,0 +1,222 @@
+2025-07-03 12:46:57,320 - INFO - === Iniciando análisis de sentimientos ===
+2025-07-03 12:46:57,320 - INFO - Modo de prueba: True
+2025-07-03 12:46:57,320 - INFO - Procesando solo 3 filas
+2025-07-03 12:46:57,343 - INFO - CSV cargado: 12587 filas totales
+2025-07-03 12:46:57,344 - INFO - Procesando desde fila 0 hasta 3
+2025-07-03 12:46:57,345 - INFO - Procesando lote: filas 0 a 2
+2025-07-03 12:46:57,715 - ERROR - Fila 0 - gpt4_nano: Error 400 - {"error":{"message":"openai/gpt-4-1-nano is not a valid model ID","code":400},"user_id":"user_2zJD6KvtsgoVae14UfIanHILH8T"}
+2025-07-03 12:46:58,201 - INFO - Fila 0 - gemini: OK (0.85s)
+2025-07-03 12:46:58,978 - INFO - Fila 0 - claude: OK (1.63s)
+2025-07-03 12:46:59,264 - INFO - Fila 0 - deepseek: OK (1.92s)
+2025-07-03 12:46:59,265 - INFO - Checkpoint guardado: 1 filas procesadas
+2025-07-03 12:46:59,359 - ERROR - Fila 1 - gpt4_nano: Error 400 - {"error":{"message":"openai/gpt-4-1-nano is not a valid model ID","code":400},"user_id":"user_2zJD6KvtsgoVae14UfIanHILH8T"}
+2025-07-03 12:46:59,921 - INFO - Fila 1 - gemini: OK (0.65s)
+2025-07-03 12:47:00,509 - INFO - Fila 1 - claude: OK (1.24s)
+2025-07-03 12:47:00,609 - INFO - Fila 1 - deepseek: OK (1.34s)
+2025-07-03 12:47:00,611 - INFO - Checkpoint guardado: 2 filas procesadas
+2025-07-03 12:47:00,661 - INFO - Progreso guardado en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:47:01,662 - INFO - Procesando lote: filas 2 a 3
+2025-07-03 12:47:01,765 - ERROR - Fila 2 - gpt4_nano: Error 400 - {"error":{"message":"openai/gpt-4-1-nano is not a valid model ID","code":400},"user_id":"user_2zJD6KvtsgoVae14UfIanHILH8T"}
+2025-07-03 12:47:02,325 - INFO - Fila 2 - gemini: OK (0.66s)
+2025-07-03 12:47:03,419 - INFO - Fila 2 - claude: OK (1.75s)
+2025-07-03 12:47:07,051 - INFO - Fila 2 - deepseek: OK (5.39s)
+2025-07-03 12:47:07,052 - INFO - Checkpoint guardado: 3 filas procesadas
+2025-07-03 12:47:07,099 - INFO - Progreso guardado en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:47:07,099 - INFO - Análisis completado!
+2025-07-03 12:47:07,140 - INFO - Resultados guardados en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:47:07,140 - INFO - 
+=== Muestra de resultados ===
+2025-07-03 12:47:07,140 - INFO - 
+deepseek:
+2025-07-03 12:47:07,140 - INFO -   Fila 0: "Negativo moderado: -5, sadness 3, nano"...
+2025-07-03 12:47:07,140 - INFO -   Fila 1: "Negativo leve: -3, sadness 3, nano"...
+2025-07-03 12:47:07,140 - INFO -   Fila 2: Basándome en la información proporcionada, aquí es...
+2025-07-03 12:47:07,140 - INFO - 
+gemini:
+2025-07-03 12:47:07,140 - INFO -   Fila 0: [Neutro]: 0, neutro 3, nano...
+2025-07-03 12:47:07,140 - INFO -   Fila 1: [Neutro]: 0, neutro 3, nano...
+2025-07-03 12:47:07,140 - INFO -   Fila 2: [Negativo moderado]: -5, sadness 3, nano...
+2025-07-03 12:47:07,140 - INFO - 
+claude:
+2025-07-03 12:47:07,141 - INFO -   Fila 0: Análisis de la publicación:
+
+[Nivel de sentimiento...
+2025-07-03 12:47:07,141 - INFO -   Fila 1: [Nivel de sentimiento con descripción]: 0, neutro ...
+2025-07-03 12:47:07,141 - INFO -   Fila 2: [Nivel de sentimiento con descripción]: -2, sadnes...
+2025-07-03 12:47:07,141 - INFO - 
+gpt4_nano:
+2025-07-03 12:47:07,141 - INFO -   Fila 0: Error: 400...
+2025-07-03 12:47:07,141 - INFO -   Fila 1: Error: 400...
+2025-07-03 12:47:07,141 - INFO -   Fila 2: Error: 400...
+2025-07-03 12:50:08,400 - INFO - === Iniciando análisis de sentimientos ===
+2025-07-03 12:50:08,401 - INFO - Modo de prueba: True
+2025-07-03 12:50:08,401 - INFO - Procesando solo 3 filas
+2025-07-03 12:50:08,426 - INFO - CSV cargado: 12587 filas totales
+2025-07-03 12:50:08,427 - INFO - Checkpoint cargado: 3 filas procesadas
+2025-07-03 12:50:08,427 - INFO - Procesando desde fila 3 hasta 3
+2025-07-03 12:50:08,428 - INFO - Análisis completado!
+2025-07-03 12:50:08,469 - INFO - Resultados guardados en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:50:08,469 - INFO - 
+=== Muestra de resultados ===
+2025-07-03 12:50:08,469 - INFO - 
+deepseek:
+2025-07-03 12:50:08,469 - INFO - 
+gemini:
+2025-07-03 12:50:08,469 - INFO - 
+claude:
+2025-07-03 12:50:08,469 - INFO - 
+gpt4_nano:
+2025-07-03 12:51:33,726 - INFO - === Iniciando análisis de sentimientos ===
+2025-07-03 12:51:33,726 - INFO - Modo de prueba: True
+2025-07-03 12:51:33,726 - INFO - Procesando solo 3 filas
+2025-07-03 12:51:33,749 - INFO - CSV cargado: 12587 filas totales
+2025-07-03 12:51:33,750 - INFO - Procesando desde fila 0 hasta 3
+2025-07-03 12:51:33,751 - INFO - Procesando lote: filas 0 a 2
+2025-07-03 12:51:34,025 - ERROR - Fila 0 - gpt4_nano: Error 400 - {"error":{"message":"openai/gpt-4-1-nano is not a valid model ID","code":400},"user_id":"user_2zJD6KvtsgoVae14UfIanHILH8T"}
+2025-07-03 12:51:34,573 - INFO - Fila 0 - gemini: OK (0.82s)
+2025-07-03 12:51:34,918 - INFO - Fila 0 - deepseek: OK (1.17s)
+2025-07-03 12:51:35,547 - INFO - Fila 0 - claude: OK (1.79s)
+2025-07-03 12:51:35,549 - INFO - Checkpoint guardado: 1 filas procesadas
+2025-07-03 12:51:35,654 - ERROR - Fila 1 - gpt4_nano: Error 400 - {"error":{"message":"openai/gpt-4-1-nano is not a valid model ID","code":400},"user_id":"user_2zJD6KvtsgoVae14UfIanHILH8T"}
+2025-07-03 12:51:36,300 - INFO - Fila 1 - gemini: OK (0.75s)
+2025-07-03 12:51:37,860 - INFO - Fila 1 - claude: OK (2.31s)
+2025-07-03 12:51:39,691 - INFO - Fila 1 - deepseek: OK (4.14s)
+2025-07-03 12:51:39,693 - INFO - Checkpoint guardado: 2 filas procesadas
+2025-07-03 12:51:39,743 - INFO - Progreso guardado en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:51:40,744 - INFO - Procesando lote: filas 2 a 3
+2025-07-03 12:51:40,924 - ERROR - Fila 2 - gpt4_nano: Error 400 - {"error":{"message":"openai/gpt-4-1-nano is not a valid model ID","code":400},"user_id":"user_2zJD6KvtsgoVae14UfIanHILH8T"}
+2025-07-03 12:51:41,503 - INFO - Fila 2 - gemini: OK (0.76s)
+2025-07-03 12:51:42,420 - INFO - Fila 2 - claude: OK (1.67s)
+2025-07-03 12:51:44,175 - INFO - Fila 2 - deepseek: OK (3.43s)
+2025-07-03 12:51:44,176 - INFO - Checkpoint guardado: 3 filas procesadas
+2025-07-03 12:51:44,220 - INFO - Progreso guardado en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:51:44,220 - INFO - Análisis completado!
+2025-07-03 12:51:44,259 - INFO - Resultados guardados en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:51:44,259 - INFO - 
+=== Muestra de resultados ===
+2025-07-03 12:51:44,259 - INFO - 
+deepseek:
+2025-07-03 12:51:44,259 - INFO -   Fila 0: "Negativo moderado: -5, sadness 3"...
+2025-07-03 12:51:44,259 - INFO -   Fila 1: Basándome en el texto de la publicación que incluy...
+2025-07-03 12:51:44,259 - INFO -   Fila 2: Basándome en el texto de la publicación ("#FORYOPA...
+2025-07-03 12:51:44,259 - INFO - 
+gemini:
+2025-07-03 12:51:44,260 - INFO -   Fila 0: [Neutro: 0, neutro 1]...
+2025-07-03 12:51:44,260 - INFO -   Fila 1: [Neutro]: 0, neutro 3...
+2025-07-03 12:51:44,260 - INFO -   Fila 2: [Negativo moderado]: -5, ansiedad 4...
+2025-07-03 12:51:44,260 - INFO - 
+claude:
+2025-07-03 12:51:44,260 - INFO -   Fila 0: Análisis de Sentimiento y Emoción:
+
+[Positivo mode...
+2025-07-03 12:51:44,260 - INFO -   Fila 1: Basado en la información proporcionada, el análisi...
+2025-07-03 12:51:44,260 - INFO -   Fila 2: Análisis de Sentimiento y Emoción:
+
+[Negativo mode...
+2025-07-03 12:51:44,260 - INFO - 
+gpt4_nano:
+2025-07-03 12:51:44,260 - INFO -   Fila 0: Error: 400...
+2025-07-03 12:51:44,260 - INFO -   Fila 1: Error: 400...
+2025-07-03 12:51:44,260 - INFO -   Fila 2: Error: 400...
+2025-07-03 12:56:04,446 - INFO - === Iniciando análisis de sentimientos ===
+2025-07-03 12:56:04,446 - INFO - Modo de prueba: True
+2025-07-03 12:56:04,446 - INFO - Procesando solo 3 filas
+2025-07-03 12:56:04,470 - INFO - CSV cargado: 12587 filas totales
+2025-07-03 12:56:04,470 - INFO - Procesando desde fila 0 hasta 3
+2025-07-03 12:56:04,471 - INFO - Procesando lote: filas 0 a 2
+2025-07-03 12:56:05,246 - INFO - Fila 0 - gemini: OK (0.77s)
+2025-07-03 12:56:05,606 - INFO - Fila 0 - gpt4_mini: OK (1.13s)
+2025-07-03 12:56:06,142 - INFO - Fila 0 - claude: OK (1.66s)
+2025-07-03 12:56:12,067 - INFO - Fila 0 - deepseek: OK (7.60s)
+2025-07-03 12:56:12,069 - INFO - Checkpoint guardado: 1 filas procesadas
+2025-07-03 12:56:12,530 - INFO - Fila 1 - gpt4_mini: OK (0.46s)
+2025-07-03 12:56:12,646 - INFO - Fila 1 - gemini: OK (0.58s)
+2025-07-03 12:56:13,564 - INFO - Fila 1 - claude: OK (1.49s)
+2025-07-03 12:56:16,144 - INFO - Fila 1 - deepseek: OK (4.07s)
+2025-07-03 12:56:16,146 - INFO - Checkpoint guardado: 2 filas procesadas
+2025-07-03 12:56:16,196 - INFO - Progreso guardado en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:56:17,198 - INFO - Procesando lote: filas 2 a 3
+2025-07-03 12:56:17,808 - INFO - Fila 2 - gemini: OK (0.61s)
+2025-07-03 12:56:17,855 - INFO - Fila 2 - gpt4_mini: OK (0.65s)
+2025-07-03 12:56:18,707 - INFO - Fila 2 - claude: OK (1.51s)
+2025-07-03 12:56:23,063 - INFO - Fila 2 - deepseek: OK (5.86s)
+2025-07-03 12:56:23,065 - INFO - Checkpoint guardado: 3 filas procesadas
+2025-07-03 12:56:23,108 - INFO - Progreso guardado en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:56:23,108 - INFO - Análisis completado!
+2025-07-03 12:56:23,147 - INFO - Resultados guardados en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:56:23,147 - INFO - 
+=== Muestra de resultados ===
+2025-07-03 12:56:23,147 - INFO - 
+deepseek:
+2025-07-03 12:56:23,147 - INFO -   Fila 0: **Negativo moderado: -6, sadness 4**  
+
+*Explicaci...
+2025-07-03 12:56:23,147 - INFO -   Fila 1: **Negativo moderado: -6, sadness 4**  
+
+### Explic...
+2025-07-03 12:56:23,147 - INFO -   Fila 2: Dada la entrada proporcionada, el texto del post c...
+2025-07-03 12:56:23,148 - INFO - 
+gemini:
+2025-07-03 12:56:23,148 - INFO -   Fila 0: [Neutro]: 0, neutro 3...
+2025-07-03 12:56:23,148 - INFO -   Fila 1: [Neutro]: 0, neutro 1...
+2025-07-03 12:56:23,148 - INFO -   Fila 2: Negativo moderado: -5, ansiedad 4...
+2025-07-03 12:56:23,148 - INFO - 
+claude:
+2025-07-03 12:56:23,148 - INFO -   Fila 0: Análisis de Sentimiento y Emoción:
+
+[Nivel de sent...
+2025-07-03 12:56:23,148 - INFO -   Fila 1: Después de analizar la información proporcionada, ...
+2025-07-03 12:56:23,148 - INFO -   Fila 2: Después de analizar el texto proporcionado, mi eva...
+2025-07-03 12:56:23,148 - INFO - 
+gpt4_mini:
+2025-07-03 12:56:23,148 - INFO -   Fila 0: Negativo leve: -3, sadness 3...
+2025-07-03 12:56:23,148 - INFO -   Fila 1: Neutro: 0, neutral 1...
+2025-07-03 12:56:23,148 - INFO -   Fila 2: "Positivo leve: +3, happiness 2"...
+2025-07-03 12:58:59,081 - INFO - === Iniciando análisis de sentimientos ===
+2025-07-03 12:58:59,081 - INFO - Modo de prueba: True
+2025-07-03 12:58:59,081 - INFO - Procesando solo 3 filas
+2025-07-03 12:58:59,105 - INFO - CSV cargado: 12587 filas totales
+2025-07-03 12:58:59,106 - INFO - Procesando desde fila 0 hasta 3
+2025-07-03 12:58:59,107 - INFO - Procesando lote: filas 0 a 2
+2025-07-03 12:58:59,932 - INFO - Fila 0 - gpt4_mini: OK (0.82s)
+2025-07-03 12:59:00,055 - INFO - Fila 0 - gemini: OK (0.94s)
+2025-07-03 12:59:00,439 - INFO - Fila 0 - deepseek: OK (1.33s)
+2025-07-03 12:59:01,914 - INFO - Fila 0 - claude: OK (2.80s)
+2025-07-03 12:59:01,916 - INFO - Checkpoint guardado: 1 filas procesadas
+2025-07-03 12:59:02,573 - INFO - Fila 1 - gemini: OK (0.66s)
+2025-07-03 12:59:02,915 - INFO - Fila 1 - gpt4_mini: OK (1.00s)
+2025-07-03 12:59:03,308 - INFO - Fila 1 - deepseek: OK (1.39s)
+2025-07-03 12:59:03,380 - INFO - Fila 1 - claude: OK (1.46s)
+2025-07-03 12:59:03,382 - INFO - Checkpoint guardado: 2 filas procesadas
+2025-07-03 12:59:03,430 - INFO - Progreso guardado en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:59:04,431 - INFO - Procesando lote: filas 2 a 3
+2025-07-03 12:59:05,091 - INFO - Fila 2 - gpt4_mini: OK (0.66s)
+2025-07-03 12:59:05,145 - INFO - Fila 2 - gemini: OK (0.71s)
+2025-07-03 12:59:05,846 - INFO - Fila 2 - claude: OK (1.41s)
+2025-07-03 12:59:06,056 - INFO - Fila 2 - deepseek: OK (1.62s)
+2025-07-03 12:59:06,058 - INFO - Checkpoint guardado: 3 filas procesadas
+2025-07-03 12:59:06,104 - INFO - Progreso guardado en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:59:06,104 - INFO - Análisis completado!
+2025-07-03 12:59:06,143 - INFO - Resultados guardados en Db/SALUD_MENTAL_analyzed.csv
+2025-07-03 12:59:06,143 - INFO - 
+=== Muestra de resultados ===
+2025-07-03 12:59:06,143 - INFO - 
+deepseek:
+2025-07-03 12:59:06,144 - INFO -   Fila 0: `Negativo moderado: -6, sadness 3`...
+2025-07-03 12:59:06,144 - INFO -   Fila 1: `Negativo moderado: -5, sadness 3`...
+2025-07-03 12:59:06,144 - INFO -   Fila 2: `Negativo leve: -3, sadness 3`...
+2025-07-03 12:59:06,144 - INFO - 
+gemini:
+2025-07-03 12:59:06,144 - INFO -   Fila 0: Neutro: 0, neutro 1...
+2025-07-03 12:59:06,144 - INFO -   Fila 1: Neutro: 0, neutro 1...
+2025-07-03 12:59:06,144 - INFO -   Fila 2: Negativo leve: -3, sadness 2...
+2025-07-03 12:59:06,144 - INFO - 
+claude:
+2025-07-03 12:59:06,144 - INFO -   Fila 0: Negativo moderado: -6, sadness 4...
+2025-07-03 12:59:06,144 - INFO -   Fila 1: Negativo moderado: -6, sadness 4...
+2025-07-03 12:59:06,144 - INFO -   Fila 2: Negativo moderado: -6, anger 4...
+2025-07-03 12:59:06,144 - INFO - 
+gpt4_mini:
+2025-07-03 12:59:06,144 - INFO -   Fila 0: Negativo leve: -3, anxiety 3...
+2025-07-03 12:59:06,144 - INFO -   Fila 1: Negativo leve: -3, sadness 3...
+2025-07-03 12:59:06,144 - INFO -   Fila 2: Negativo leve: -3, anxiety 3...

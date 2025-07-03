@@ -1,0 +1,124 @@
+name: Análisis de Sentimientos
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Ejecutar en modo de prueba'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      test_rows:
+        description: 'Número de filas para modo de prueba'
+        required: false
+        default: '5'
+        type: string
+  
+  push:
+    branches: [ main ]
+    paths:
+      - 'Db/SALUD_MENTAL.csv'
+      - 'analyze_sentiment_llms.py'
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360  # 6 horas máximo
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v3
+    
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Cache de dependencias
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Verificar estructura de archivos
+      run: |
+        echo "Verificando archivos..."
+        ls -la
+        ls -la Db/
+        head -5 Db/SALUD_MENTAL.csv
+    
+    - name: Ejecutar análisis
+      env:
+        OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        TEST_MODE: ${{ github.event.inputs.test_mode || 'false' }}
+        TEST_ROWS: ${{ github.event.inputs.test_rows || '5' }}
+        BATCH_SIZE: 20
+        MAX_CONCURRENT_REQUESTS: 30
+      run: |
+        echo "Iniciando análisis..."
+        echo "TEST_MODE: $TEST_MODE"
+        echo "TEST_ROWS: $TEST_ROWS"
+        python analyze_sentiment_llms.py
+    
+    - name: Verificar resultados
+      if: always()
+      run: |
+        echo "Archivos generados:"
+        ls -la Db/SALUD_MENTAL_analyzed.csv || echo "No se encontró archivo de salida"
+        ls -la analysis.log || echo "No se encontró archivo de log"
+        ls -la checkpoint.json || echo "No hay checkpoint activo"
+        
+        if [ -f "analysis.log" ]; then
+          echo "Últimas 50 líneas del log:"
+          tail -50 analysis.log
+        fi
+    
+    - name: Subir resultados
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: analysis-results-${{ github.run_number }}
+        path: |
+          Db/SALUD_MENTAL_analyzed.csv
+          analysis.log
+          checkpoint.json
+        retention-days: 30
+    
+    - name: Crear resumen
+      if: success()
+      run: |
+        echo "## 📊 Análisis de Sentimientos Completado" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Modo**: ${{ env.TEST_MODE == 'true' && 'Prueba' || 'Completo' }}" >> $GITHUB_STEP_SUMMARY
+        if [ "${{ env.TEST_MODE }}" == "true" ]; then
+          echo "- **Filas procesadas**: ${{ env.TEST_ROWS }}" >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "- **Fecha**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "Db/SALUD_MENTAL_analyzed.csv" ]; then
+          echo "### Muestra de resultados" >> $GITHUB_STEP_SUMMARY
+          echo '```csv' >> $GITHUB_STEP_SUMMARY
+          head -3 Db/SALUD_MENTAL_analyzed.csv >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+        fi
+    
+    - name: Commit resultados (opcional)
+      if: github.event_name == 'push' && success()
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add Db/SALUD_MENTAL_analyzed.csv || true
+        git commit -m "Actualizar resultados de análisis de sentimientos [skip ci]" || echo "No hay cambios para commit"
+        git push || echo "No se pudo hacer push" 
