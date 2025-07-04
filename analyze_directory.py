@@ -329,6 +329,33 @@ class SentimentAnalyzer:
             if MAX_ROWS_TO_PROCESS != -1:
                 rows_to_process = min(total_rows_in_df, MAX_ROWS_TO_PROCESS)
 
+            logger.info(f"Total de filas en el dataframe: {total_rows_in_df}")
+            logger.info(f"Filas a procesar según configuración: {rows_to_process}")
+            logger.info(f"Filas ya procesadas según checkpoint: {start_row}")
+            
+            # Verificar si ya se completó el procesamiento
+            if start_row >= rows_to_process:
+                logger.info(f"El análisis ya está completo. Se procesaron {start_row} filas de {rows_to_process} requeridas.")
+                
+                # Cargar resultados del checkpoint al dataframe
+                for model_name in MODELS.keys():
+                    for suffix in ["sentiment_desc", "sentiment_score", "emotion", "emotion_intensity"]:
+                        col_name = f"{model_name}_{suffix}"
+                        if col_name not in df.columns:
+                            df[col_name] = pd.Series(dtype='object')
+                
+                # Aplicar los resultados guardados al dataframe actual
+                for idx_str, results in self.checkpoint_data['results'].items():
+                    idx = int(idx_str)
+                    if idx < len(df):  # Solo aplicar si el índice existe en el df actual
+                        for col_name, value in results.items():
+                            if col_name in df.columns:
+                                df.at[idx, col_name] = value
+                
+                logger.info(f"Guardando resultados existentes en {OUTPUT_FILE}")
+                df.to_csv(OUTPUT_FILE, index=False)
+                return df
+            
             logger.info(f"Procesando desde fila {start_row} hasta {rows_to_process}")
             
             for model_name in MODELS.keys():
