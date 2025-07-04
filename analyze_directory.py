@@ -100,6 +100,7 @@ class SentimentAnalyzer:
     def __init__(self):
         self.session = None
         self.semaphore = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
+        self.checkpoint_lock = asyncio.Lock()  # Lock para escritura segura
         self.checkpoint_data = self.load_checkpoint()
 
     def load_checkpoint(self) -> Dict:
@@ -107,26 +108,54 @@ class SentimentAnalyzer:
         if os.path.exists(CHECKPOINT_FILE):
             try:
                 with open(CHECKPOINT_FILE, 'r') as f:
-                    data = json.load(f)
-                logger.info(f"Checkpoint cargado: {data['processed_rows']} filas procesadas")
+                    # Prevenir error si el archivo está vacío
+                    content = f.read()
+                    if not content:
+                        logger.warning("El archivo de checkpoint está vacío. Empezando de cero.")
+                        return {'processed_rows': 0, 'results': {}}
+                    data = json.loads(content)
+                logger.info(f"Checkpoint cargado: {data.get('processed_rows', 0)} filas procesadas")
+                # Asegurar que las claves requeridas existan
+                if 'processed_rows' not in data or 'results' not in data:
+                    logger.warning("Archivo de checkpoint incompleto. Recreando.")
+                    return {'processed_rows': 0, 'results': {}}
                 return data
-            except Exception as e:
-                logger.error(f"Error cargando checkpoint: {e}")
+            except (json.JSONDecodeError, Exception) as e:
+                logger.error(f"Error cargando checkpoint, se empezará de nuevo: {e}")
         return {'processed_rows': 0, 'results': {}}
 
-    def save_checkpoint(self, processed_rows: int, results: Dict):
-        """Guardar checkpoint"""
-        checkpoint = {
-            'processed_rows': processed_rows,
-            'results': results,
-            'timestamp': datetime.now().isoformat()
-        }
-        try:
-            with open(CHECKPOINT_FILE, 'w') as f:
-                json.dump(checkpoint, f, indent=2)
-            logger.info(f"Checkpoint guardado: {processed_rows} filas procesadas")
-        except Exception as e:
-            logger.error(f"Error guardando checkpoint: {e}")
+    async def save_checkpoint(self, processed_rows: int, results: Dict):
+        """Guardar checkpoint de forma segura, evitando retrocesos."""
+        async with self.checkpoint_lock:
+            current_progress = 0
+            if os.path.exists(CHECKPOINT_FILE):
+                try:
+                    with open(CHECKPOINT_FILE, 'r') as f:
+                        content = f.read()
+                        if content:
+                           current_progress = json.loads(content).get('processed_rows', 0)
+                except (json.JSONDecodeError, FileNotFoundError):
+                    # Si hay error o no existe, se considera 0
+                    pass
+            
+            # Solo guardar si el progreso es mayor
+            if processed_rows > current_progress:
+                checkpoint = {
+                    'processed_rows': processed_rows,
+                    'results': results,
+                    'timestamp': datetime.now().isoformat()
+                }
+                try:
+                    # Escritura atómica (temporal y luego renombrar)
+                    temp_file = CHECKPOINT_FILE + ".tmp"
+                    with open(temp_file, 'w') as f:
+                        json.dump(checkpoint, f, indent=2)
+                    os.replace(temp_file, CHECKPOINT_FILE)
+                    logger.info(f"Checkpoint guardado: {processed_rows} filas procesadas")
+                except Exception as e:
+                    logger.error(f"Error guardando checkpoint: {e}")
+            else:
+                logger.info(f"Se omite guardado de checkpoint. Progreso actual ({current_progress}) es mayor o igual que el nuevo ({processed_rows}).")
 
     async def create_session(self):
         """Crear sesión aiohttp"""
@@ -285,7 +314,8 @@ class SentimentAnalyzer:
             batch_results.append((idx, results))
             
             self.checkpoint_data['results'][str(idx)] = results
-            self.save_checkpoint(idx + 1, self.checkpoint_data['results'])
+            # Ahora la llamada es asíncrona y más segura
+            await self.save_checkpoint(idx + 1, self.checkpoint_data['results'])
         return batch_results
 
     async def analyze_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
