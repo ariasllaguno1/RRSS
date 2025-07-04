@@ -1,0 +1,64 @@
+name: Run Sentiment Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      files_to_process:
+        description: "CSVs to process (comma-separated, e.g., 'FORBES.csv,GLOVO.csv'). Leave empty for all."
+        required: false
+        default: ''
+        type: string
+      max_rows:
+        description: "Max rows to process. Set to -1 for all."
+        required: true
+        default: 100
+        type: number
+      model_id:
+        description: "OpenRouter Model ID (e.g., 'google/gemini-flash-1.5')"
+        required: true
+        default: 'google/gemini-flash-1.5'
+        type: string
+      model_name:
+        description: "Short model name for column naming (e.g., 'gemini')"
+        required: true
+        default: 'gemini'
+        type: string
+
+jobs:
+  run-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run analysis script
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          MAX_ROWS_TO_PROCESS: ${{ github.event.inputs.max_rows }}
+          FILES_TO_PROCESS: ${{ github.event.inputs.files_to_process }}
+          MODEL_ID: ${{ github.event.inputs.model_id }}
+          MODEL_NAME: ${{ github.event.inputs.model_name }}
+          INPUT_DIR: 'Db'
+          OUTPUT_FILE: 'Db/all_comments_analyzed.csv'
+          CHECKPOINT_FILE: 'checkpoint_all.json'
+        run: python analyze_directory.py
+
+      - name: Commit results
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(analysis): Update sentiment analysis results"
+          file_pattern: "Db/all_comments_analyzed.csv analysis_directory.log checkpoint_all.json"
+          commit_user_name: "GitHub Actions Bot"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "GitHub Actions Bot <github-actions[bot]@users.noreply.github.com>" 
