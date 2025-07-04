@@ -354,10 +354,6 @@ class SentimentAnalyzer:
             logger.info(f"Guardando todos los resultados en {OUTPUT_FILE}")
             df.to_csv(OUTPUT_FILE, index=False)
             
-            if rows_to_process >= total_rows_in_df and os.path.exists(CHECKPOINT_FILE):
-                os.remove(CHECKPOINT_FILE)
-                logger.info("Análisis completo de todas las filas. Checkpoint eliminado.")
-            
             return df
         finally:
             await self.close_session()
